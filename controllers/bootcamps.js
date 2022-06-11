@@ -58,12 +58,25 @@ const createBootcamp = async (req, res, next) => {
 // @access  Private
 const updateBootcamp = async (req, res, next) => {
 	try {
-		const bootcamp = await Bootcamp.create(req.body)
+		// passing three parameters to the findByIdAndUpdate function, one the id, second the updted data and third (optional) for more configuration
+		const bootcamp = await Bootcamp.findByIdAndUpdate(
+			req.params.id,
+			req.body,
+			{
+				// to get the updated data as response
+				new: true,
+				runValidators: true,
+			}
+		)
 
-		res.status(201).json({
-			success: true,
-			data: bootcamp,
-		})
+		if (bootcamp) {
+			res.status(200).json({
+				success: true,
+				data: bootcamp,
+			})
+		} else {
+			res.status(400).json({ success: false })
+		}
 	} catch (err) {
 		res.status(400).json({ success: false })
 	}
