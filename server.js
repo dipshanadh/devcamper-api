@@ -18,6 +18,9 @@ const bootcamps = require("./routes/bootcamps")
 // initializing the app
 const app = express()
 
+// Body parser for json
+app.use(express.json())
+
 // logger middleware
 app.use(logger)
 
@@ -27,18 +30,10 @@ app.use("/api/bootcamps", bootcamps)
 const PORT = process.env.PORT
 
 // listening to the app
-const server = app.listen(
+app.listen(
 	PORT,
+	// log message after succesfully listening to the app
 	console.log(
 		`Server running on port ${PORT} in ${process.env.NODE_ENV} mode`
 	)
 )
-
-// Handle unhandles promise rejections
-process.on("unhandledRejection", err => {
-	// log the error
-	console.log(`Error: ${err.message}`)
-
-	// close the server and exit process
-	server.close(() => process.exit(1))
-})

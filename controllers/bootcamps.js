@@ -1,3 +1,6 @@
+// import the schema
+const Bootcamp = require("../models/Bootcamp")
+
 // @desc    Get all bootcamps
 // @route   GET /api/bootcamps
 // @access  Public
@@ -21,8 +24,17 @@ const getBootcamp = (req, res, next) => {
 // @desc    Create a new bootcamp
 // @route   POST /api/bootcamps
 // @access  Private
-const createBootcamp = (req, res, next) => {
-	res.status(200).json({ success: true, msg: "Create new bootcamp" })
+const createBootcamp = async (req, res, next) => {
+	try {
+		const bootcamp = await Bootcamp.create(req.body)
+
+		res.status(201).json({
+			success: true,
+			data: bootcamp,
+		})
+	} catch (err) {
+		res.status(400).json({ success: false })
+	}
 }
 
 // @desc    Update a bootcamp
