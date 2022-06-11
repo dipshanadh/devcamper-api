@@ -14,10 +14,6 @@ const router = express.Router()
 // mount the routes
 router.route("/").get(getBootcamps).post(createBootcamp)
 
-router
-	.route("/:id")
-	.get(getBootcamp)
-	.post(updateBootcamp)
-	.delete(deleteBootcamp)
+router.route("/:id").get(getBootcamp).put(updateBootcamp).delete(deleteBootcamp)
 
 module.exports = router
