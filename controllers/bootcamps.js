@@ -87,6 +87,17 @@ const updateBootcamp = async (req, res, next) => {
 // @access  Private
 const deleteBootcamp = async (req, res, next) => {
 	try {
+		const bootcamp = await Bootcamp.findByIdAndDelete(req.params.id)
+
+		if (bootcamp) {
+			const Bootcamps = await Bootcamp.find()
+			res.status(200).json({
+				success: true,
+				data: Bootcamps,
+			})
+		} else {
+			res.status(400).json({ success: false })
+		}
 	} catch (err) {
 		res.status(400).json({ success: false })
 	}
