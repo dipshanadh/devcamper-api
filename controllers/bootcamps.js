@@ -1,6 +1,8 @@
 // import the schema
 const Bootcamp = require("../models/Bootcamp")
 
+const ErrorResponse = require("../utils/errorResponse")
+
 // @desc    Get all bootcamps
 // @route   GET /api/bootcamps
 // @access  Public
@@ -24,17 +26,25 @@ const getBootcamp = async (req, res, next) => {
 	try {
 		const bootcamp = await Bootcamp.findById(req.params.id)
 
+		// this is for well formatted object id, but not found on database
 		if (bootcamp) {
-			res.status(200).json({
-				success: true,
-				data: bootcamp,
-			})
+			res.status(200).json({ sucess: true, data: bootcamp })
 		} else {
-			res.status(404).json({ success: false })
+			next(
+				new ErrorResponse(
+					`Bootcamp not found with id of ${req.params.id}`,
+					404
+				)
+			)
 		}
 	} catch (err) {
-		// res.status(404).json({ success: false })
-		next(err)
+		// this is for not well formatted object id
+		next(
+			new ErrorResponse(
+				`Bootcamp not found with id of ${req.params.id}`,
+				404
+			)
+		)
 	}
 }
 
