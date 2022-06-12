@@ -11,6 +11,7 @@ connectDB()
 
 // middleware files
 const logger = require("./middleware/logger")
+const errorHandler = require("./middleware/error")
 
 // router files
 const bootcamps = require("./routes/bootcamps")
@@ -26,6 +27,9 @@ app.use(logger)
 
 // mount routers
 app.use("/api/bootcamps", bootcamps)
+
+// error handler - put after the router !
+app.use(errorHandler)
 
 const PORT = process.env.PORT
 
