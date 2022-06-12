@@ -11,7 +11,7 @@ connectDB()
 
 // middleware files
 const logger = require("./middleware/logger")
-const errorHandler = require("./middleware/error")
+const errorHandler = require("./middleware/errorHandler")
 
 // router files
 const bootcamps = require("./routes/bootcamps")

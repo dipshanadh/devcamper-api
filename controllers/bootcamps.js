@@ -15,7 +15,7 @@ const getBootcamps = async (req, res, next) => {
 			data: bootcamps,
 		})
 	} catch (err) {
-		res.status(400).json({ success: false })
+		next(err)
 	}
 }
 
@@ -39,12 +39,7 @@ const getBootcamp = async (req, res, next) => {
 		}
 	} catch (err) {
 		// this is for not well formatted object id
-		next(
-			new ErrorResponse(
-				`Bootcamp not found with id of ${req.params.id}`,
-				404
-			)
-		)
+		next(err)
 	}
 }
 
@@ -60,7 +55,7 @@ const createBootcamp = async (req, res, next) => {
 			data: bootcamp,
 		})
 	} catch (err) {
-		res.status(400).json({ success: false })
+		next(err)
 	}
 }
 
@@ -86,10 +81,15 @@ const updateBootcamp = async (req, res, next) => {
 				data: bootcamp,
 			})
 		} else {
-			res.status(400).json({ success: false })
+			next(
+				new ErrorResponse(
+					`Bootcamp not found with id of ${req.params.id}`,
+					404
+				)
+			)
 		}
 	} catch (err) {
-		res.status(400).json({ success: false })
+		next(err)
 	}
 }
 
@@ -107,10 +107,15 @@ const deleteBootcamp = async (req, res, next) => {
 				data: Bootcamps,
 			})
 		} else {
-			res.status(400).json({ success: false })
+			next(
+				new ErrorResponse(
+					`Bootcamp not found with id of ${req.params.id}`,
+					404
+				)
+			)
 		}
 	} catch (err) {
-		res.status(400).json({ success: false })
+		next(err)
 	}
 }
 
