@@ -1,7 +1,7 @@
 {
 	"name": "devcamper_api",
 	"version": "1.0.0",
-	"description": "backend api made by me while learning node.js and express.js",
+	"description": "Backend API made by me while learning node.js and express.js",
 	"main": "server.js",
 	"scripts": {
 		"start": "SET NODE_ENV=production && node server",
