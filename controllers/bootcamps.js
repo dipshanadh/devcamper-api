@@ -22,7 +22,7 @@ const getBootcamps = asyncHandler(async (req, res, next) => {
 // @route   GET /api/bootcamps/:id
 // @access  Public
 const getBootcamp = asyncHandler(async (req, res, next) => {
-	const bootcamp = await Bootcamp.findById(req.params.id)
+	const bootcamp = await Bootcamp.findOne({ slug: req.params.slug })
 
 	// this is for well formatted object id, but not found on database
 	if (bootcamp) {

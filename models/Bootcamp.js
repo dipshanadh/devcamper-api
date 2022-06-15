@@ -99,6 +99,7 @@ const BootcampSchema = new mongoose.Schema({
 BootcampSchema.pre("save", function (next) {
 	this.slug = slugify(this.name, {
 		lower: true,
+		strict: true,
 	})
 
 	next()
