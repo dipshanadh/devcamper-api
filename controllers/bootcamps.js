@@ -19,7 +19,7 @@ const getBootcamps = asyncHandler(async (req, res, next) => {
 })
 
 // @desc    Get a single bootcamp
-// @route   GET /api/bootcamps/:id
+// @route   GET /api/bootcamps/:slug
 // @access  Public
 const getBootcamp = asyncHandler(async (req, res, next) => {
 	const bootcamp = await Bootcamp.findOne({ slug: req.params.slug })
@@ -50,15 +50,19 @@ const createBootcamp = asyncHandler(async (req, res, next) => {
 })
 
 // @desc    Update a bootcamp
-// @route   PUT /api/bootcamps/:id
+// @route   PUT /api/bootcamps/:slug
 // @access  Private
 const updateBootcamp = asyncHandler(async (req, res, next) => {
 	// passing three parameters to the findByIdAndUpdate function, one the id, second the updted data and third (optional) for more configuration
-	const bootcamp = await Bootcamp.findByIdAndUpdate(req.params.id, req.body, {
-		// to get the updated data as response
-		new: true,
-		runValidators: true,
-	})
+	const bootcamp = await Bootcamp.findOneAndUpdate(
+		{ slug: req.params.slug },
+		req.body,
+		{
+			// to get the updated data as response
+			new: true,
+			runValidators: true,
+		}
+	)
 
 	if (bootcamp) {
 		res.status(200).json({
@@ -76,21 +80,22 @@ const updateBootcamp = asyncHandler(async (req, res, next) => {
 })
 
 // @desc    Delete a bootcamp
-// @route   DELETE /api/bootcamps/:id
+// @route   DELETE /api/bootcamps/:slug
 // @access  Private
 const deleteBootcamp = asyncHandler(async (req, res, next) => {
-	const bootcamp = await Bootcamp.findByIdAndDelete(req.params.id)
+	const bootcamp = await Bootcamp.findOneAndDelete({ slug: req.params.slug })
 
 	if (bootcamp) {
 		const Bootcamps = await Bootcamp.find()
 		res.status(200).json({
 			success: true,
+			count: Bootcamps.length,
 			data: Bootcamps,
 		})
 	} else {
 		next(
 			new ErrorResponse(
-				`Bootcamp not found with id of ${req.params.id}`,
+				`Bootcamp not found with id of ${req.params.slug}`,
 				404
 			)
 		)
