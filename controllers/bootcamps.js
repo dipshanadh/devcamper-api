@@ -9,7 +9,11 @@ const asyncHandler = require("../middleware/asyncHandler")
 
 // using async handler to prevent repetitive code
 const getBootcamps = asyncHandler(async (req, res, next) => {
-	const bootcamps = await Bootcamp.find()
+	let query = JSON.stringify(req.query)
+
+	query = query.replace(/\b(gt|gte|lt|lte|in)\b/g, match => `$${match}`)
+
+	const bootcamps = await Bootcamp.find(JSON.parse(query))
 
 	res.status(200).json({
 		success: true,
