@@ -9,11 +9,32 @@ const asyncHandler = require("../middleware/asyncHandler")
 
 // using async handler to prevent repetitive code
 const getBootcamps = asyncHandler(async (req, res, next) => {
-	let query = JSON.stringify(req.query)
+	// copy req.query
+	const reqQuery = { ...req.query }
 
-	query = query.replace(/\b(gt|gte|lt|lte|in)\b/g, match => `$${match}`)
+	// Fields to exlude
+	const removeFields = ["select"]
 
-	const bootcamps = await Bootcamp.find(JSON.parse(query))
+	// Loop over removeFields and delete them from query
+	removeFields.forEach(param => delete reqQuery[param])
+
+	// Create query string
+	let queryStr = JSON.stringify(reqQuery)
+
+	// Create operator ($gt, $gte, etc.)
+	queryStr = queryStr.replace(/\b(gt|gte|lt|lte|in)\b/g, match => `$${match}`)
+
+	// Finding resource
+	let query = Bootcamp.find(JSON.parse(queryStr))
+
+	// Select Fields from URL
+	if (req.query.select) {
+		const fields = req.query.select.split(",").join(" ")
+		query = query.select(fields)
+	}
+
+	// Executing query
+	const bootcamps = await query
 
 	res.status(200).json({
 		success: true,
