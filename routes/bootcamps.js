@@ -15,7 +15,7 @@ const courseRouter = require("./courses")
 const router = express.Router()
 
 // Re-route into other resource router
-router.use("/:bootcampSlug/courses", courseRouter)
+router.use("/:bootcamp/courses", courseRouter)
 
 // mount the routes
 router.route("/").get(getBootcamps).post(createBootcamp)
