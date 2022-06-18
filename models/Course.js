@@ -31,10 +31,10 @@ const CourseSchema = new mongoose.Schema({
 		type: Date,
 		default: Date.now,
 	},
-	bootcamp: {
-		type: mongoose.Schema.ObjectId,
+	bootcampSlug: {
+		type: String,
 		// reference for boocamp model
-		ref: "Bootcamp",
+		// ref: "Bootcamp",
 		require: true,
 	},
 })
