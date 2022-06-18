@@ -25,7 +25,10 @@ const getBootcamps = asyncHandler(async (req, res, next) => {
 	queryStr = queryStr.replace(/\b(gt|gte|lt|lte|in)\b/g, match => `$${match}`)
 
 	// Finding resource
-	let query = Bootcamp.find(JSON.parse(queryStr))
+	let query = Bootcamp.find(JSON.parse(queryStr)).populate({
+		path: "courses",
+		select: "title description",
+	})
 
 	// Select Fields
 	if (req.query.select) {
@@ -92,7 +95,12 @@ const getBootcamps = asyncHandler(async (req, res, next) => {
 // @route   GET /api/bootcamps/:slug
 // @access  Public
 const getBootcamp = asyncHandler(async (req, res, next) => {
-	const bootcamp = await Bootcamp.findOne({ slug: req.params.slug })
+	const bootcamp = await Bootcamp.findOne({ slug: req.params.slug }).populate(
+		{
+			path: "courses",
+			select: "title description",
+		}
+	)
 
 	// this is for well formatted object id, but not found on database
 	if (bootcamp) {
