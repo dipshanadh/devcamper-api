@@ -161,9 +161,10 @@ const updateBootcamp = asyncHandler(async (req, res, next) => {
 // @route   DELETE /api/bootcamps/:slug
 // @access  Private
 const deleteBootcamp = asyncHandler(async (req, res, next) => {
-	const bootcamp = await Bootcamp.findOneAndDelete({ slug: req.params.slug })
+	const bootcamp = await Bootcamp.findOne({ slug: req.params.slug })
 
 	if (bootcamp) {
+		await bootcamp.remove()
 		const Bootcamps = await Bootcamp.find()
 		res.status(200).json({
 			success: true,

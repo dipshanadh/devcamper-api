@@ -15,7 +15,7 @@ const getCourses = asyncHandler(async (req, res, next) => {
 		query = Course.find({ bootcampSlug: req.params.bootcampSlug }).populate(
 			{
 				path: "bootcamp",
-				select: "name description",
+				select: "name",
 			}
 		)
 	} else {
