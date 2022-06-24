@@ -86,4 +86,34 @@ const addCourse = asyncHandler(async (req, res, next) => {
 	}
 })
 
-module.exports = { getCourses, getCourse, addCourse }
+// @desc    Update a course
+// @route   GET /api/courses/:slug/
+// @access  Private
+const updateCourse = asyncHandler(async (req, res, next) => {
+	let course = await Course.findOne({ slug: req.params.slug })
+
+	if (course) {
+		course = await Course.findOneAndUpdate(
+			{ slug: req.params.slug },
+			req.body,
+			{
+				new: true,
+				runValidators: true,
+			}
+		)
+
+		res.status(200).json({
+			success: true,
+			data: course,
+		})
+	} else {
+		next(
+			new ErrorResponse(
+				`No bootcamp with the id of ${req.params.slug}`,
+				404
+			)
+		)
+	}
+})
+
+module.exports = { getCourses, getCourse, addCourse, updateCourse }
