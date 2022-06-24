@@ -1,4 +1,5 @@
 const mongoose = require("mongoose")
+const slugify = require("slugify")
 
 const CourseSchema = new mongoose.Schema({
 	title: {
@@ -41,6 +42,17 @@ const CourseSchema = new mongoose.Schema({
 		type: String,
 		required: true,
 	},
+	slug: String,
+})
+
+// Create course slug from the name
+CourseSchema.pre("save", function (next) {
+	this.slug = slugify(this.title, {
+		lower: true,
+		strict: true,
+	})
+
+	next()
 })
 
 module.exports = mongoose.model("Course", CourseSchema)

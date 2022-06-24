@@ -35,4 +35,28 @@ const getCourses = asyncHandler(async (req, res, next) => {
 	})
 })
 
-module.exports = { getCourses }
+// @desc    Get a single course
+// @route   GET /api/courses/:slug
+// @access  Public
+const getCourse = asyncHandler(async (req, res, next) => {
+	const course = await Course.findOne({ slug: req.params.slug }).populate({
+		path: "bootcamp",
+		select: "name",
+	})
+
+	if (course) {
+		res.status(200).json({
+			success: true,
+			data: course,
+		})
+	} else {
+		next(
+			new ErrorResponse(
+				`No course with the id of ${req.params.slug}`,
+				404
+			)
+		)
+	}
+})
+
+module.exports = { getCourses, getCourse }
