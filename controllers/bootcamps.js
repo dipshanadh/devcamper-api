@@ -27,7 +27,7 @@ const getBootcamps = asyncHandler(async (req, res, next) => {
 	// Finding resource
 	let query = Bootcamp.find(JSON.parse(queryStr)).populate({
 		path: "courses",
-		select: "title description",
+		select: "title description slug",
 	})
 
 	// Select Fields
@@ -98,7 +98,7 @@ const getBootcamp = asyncHandler(async (req, res, next) => {
 	const bootcamp = await Bootcamp.findOne({ slug: req.params.slug }).populate(
 		{
 			path: "courses",
-			select: "title description",
+			select: "title description slug",
 		}
 	)
 

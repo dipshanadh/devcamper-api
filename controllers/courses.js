@@ -1,5 +1,6 @@
 // import the schema
 const Course = require("../models/Course")
+const Bootcamp = require("../models/Bootcamp")
 const ErrorResponse = require("../utils/errorResponse")
 const asyncHandler = require("../middleware/asyncHandler")
 
@@ -59,4 +60,30 @@ const getCourse = asyncHandler(async (req, res, next) => {
 	}
 })
 
-module.exports = { getCourses, getCourse }
+// @desc    Add a course
+// @route   GET /api/courses/:bootcampSlug/courses
+// @access  Private
+const addCourse = asyncHandler(async (req, res, next) => {
+	req.body.bootcampSlug = req.params.bootcampSlug
+
+	const bootcamp = await Bootcamp.findOne({ slug: req.params.bootcampSlug })
+	req.body.bootcamp = bootcamp._id
+
+	if (bootcamp) {
+		const course = await Course.create(req.body)
+
+		res.status(200).json({
+			success: true,
+			data: course,
+		})
+	} else {
+		next(
+			new ErrorResponse(
+				`No bootcamp with the id of ${req.params.bootcampSlug}`,
+				404
+			)
+		)
+	}
+})
+
+module.exports = { getCourses, getCourse, addCourse }
