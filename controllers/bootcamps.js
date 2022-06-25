@@ -25,10 +25,7 @@ const getBootcamps = asyncHandler(async (req, res, next) => {
 	queryStr = queryStr.replace(/\b(gt|gte|lt|lte|in)\b/g, match => `$${match}`)
 
 	// Finding resource
-	let query = Bootcamp.find(JSON.parse(queryStr)).populate({
-		path: "courses",
-		select: "title description slug",
-	})
+	let query = Bootcamp.find(JSON.parse(queryStr))
 
 	// Select Fields
 	if (req.query.select) {
@@ -98,7 +95,7 @@ const getBootcamp = asyncHandler(async (req, res, next) => {
 	const bootcamp = await Bootcamp.findOne({ slug: req.params.slug }).populate(
 		{
 			path: "courses",
-			select: "title description slug",
+			select: "title slug tuition bootcampSlug",
 		}
 	)
 
