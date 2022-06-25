@@ -5,7 +5,7 @@
 	"main": "server.js",
 	"scripts": {
 		"start": "SET NODE_ENV=production && node server",
-		"production": "NODE_ENV=production node server",
+		"production": "node server",
 		"dev": "nodemon server"
 	},
 	"author": "Dipshan Adhikari",
