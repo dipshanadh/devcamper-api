@@ -67,9 +67,9 @@ const addCourse = asyncHandler(async (req, res, next) => {
 	req.body.bootcampSlug = req.params.bootcampSlug
 
 	const bootcamp = await Bootcamp.findOne({ slug: req.params.bootcampSlug })
-	req.body.bootcamp = bootcamp._id
 
 	if (bootcamp) {
+		req.body.bootcamp = bootcamp._id
 		const course = await Course.create(req.body)
 
 		res.status(200).json({
@@ -116,4 +116,33 @@ const updateCourse = asyncHandler(async (req, res, next) => {
 	}
 })
 
-module.exports = { getCourses, getCourse, addCourse, updateCourse }
+// @desc    Delete a course
+// @route   DELETE /api/courses/:slug/
+// @access  Private
+const deleteCourse = asyncHandler(async (req, res, next) => {
+	const course = await Course.findOne({ slug: req.params.slug })
+
+	if (course) {
+		await course.remove()
+
+		res.status(200).json({
+			success: true,
+			data: {},
+		})
+	} else {
+		next(
+			new ErrorResponse(
+				`No bootcamp with the id of ${req.params.slug}`,
+				404
+			)
+		)
+	}
+})
+
+module.exports = {
+	getCourses,
+	getCourse,
+	addCourse,
+	updateCourse,
+	deleteCourse,
+}
