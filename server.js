@@ -1,9 +1,10 @@
 // importing all dependencies
 const express = require("express")
 const dotenv = require("dotenv")
+const fileupload = require("express-fileupload")
 const connectDB = require("./config/db")
 
-// Load env vars
+// Load env vars with a custom path using the config function
 dotenv.config({ path: "./config/config.env" })
 
 // connect to database
@@ -25,6 +26,9 @@ app.use(express.json())
 
 // logger middleware
 app.use(logger)
+
+// File uploading
+app.use(fileupload())
 
 // mount routers
 app.use("/api/bootcamps", bootcamps)

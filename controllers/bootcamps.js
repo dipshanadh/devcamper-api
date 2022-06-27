@@ -154,6 +154,26 @@ const updateBootcamp = asyncHandler(async (req, res, next) => {
 	}
 })
 
+// @desc    Upload photo for a bootcamp
+// @route   PUT /api/bootcamps/:slug/photo
+// @access  Private
+const bootcampPhotoUpload = asyncHandler(async (req, res, next) => {
+	const bootcamp = await Bootcamp.findOne({ slug: req.params.slug })
+
+	if (!bootcamp) {
+		return next(
+			new ErrorResponse(
+				`Bootcamp not found with id of ${req.params.slug}`,
+				404
+			)
+		)
+	}
+
+	if (!req.files) {
+		return next(new ErrorResponse("Please upload a photo", 404))
+	}
+})
+
 // @desc    Delete a bootcamp
 // @route   DELETE /api/bootcamps/:slug
 // @access  Private
@@ -184,4 +204,5 @@ module.exports = {
 	createBootcamp,
 	updateBootcamp,
 	deleteBootcamp,
+	bootcampPhotoUpload,
 }

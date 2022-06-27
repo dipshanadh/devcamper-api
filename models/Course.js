@@ -60,8 +60,6 @@ CourseSchema.pre("save", function (next) {
 
 // Static method to get avg of course tuitions
 CourseSchema.statics.getAverageCost = async function (id) {
-	console.log(`Calculating avg cost of ${id}`)
-
 	const obj = await this.aggregate([
 		{
 			$match: { bootcamp: id },
