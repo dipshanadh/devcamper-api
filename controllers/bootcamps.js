@@ -1,3 +1,5 @@
+const path = require("path")
+
 // import the schema
 const Bootcamp = require("../models/Bootcamp")
 const ErrorResponse = require("../utils/errorResponse")
@@ -101,7 +103,7 @@ const getBootcamp = asyncHandler(async (req, res, next) => {
 
 	// this is for well formatted object id, but not found on database
 	if (bootcamp) {
-		res.status(200).json({ sucess: true, data: bootcamp })
+		res.status(200).json({ success: true, data: bootcamp })
 	} else {
 		next(
 			new ErrorResponse(
@@ -170,8 +172,51 @@ const bootcampPhotoUpload = asyncHandler(async (req, res, next) => {
 	}
 
 	if (!req.files) {
-		return next(new ErrorResponse("Please upload a photo", 404))
+		return next(new ErrorResponse("Please upload a file", 400))
 	}
+
+	const { file } = req.files
+
+	// Make sure the image is a photo
+	if (!file.mimetype.startsWith("image")) {
+		return next(new ErrorResponse("Please upload an image file", 400))
+	}
+
+	// 1 kb = 1024b and 1mb = 1024kb so the max file size is 1mb
+	const maxFileSize = 2 * 1024 * 1024
+
+	// Check file size
+	if (file.size > maxFileSize) {
+		return next(
+			new ErrorResponse(
+				`Please upload an image less than ${maxFileSize}`,
+				400
+			)
+		)
+	}
+
+	// Create custom file name
+	file.name = `${bootcamp.slug}${path.extname(file.name)}`
+
+	file.mv(`${process.env.FILE_UPLOAD_PATH}/${file.name}`, async err => {
+		if (err) {
+			console.log(err)
+
+			next(new ErrorResponse("Problem with file upload", 500))
+		} else {
+			await Bootcamp.findOneAndUpdate(
+				{ slug: req.params.slug },
+				{
+					photo: file.name,
+				}
+			)
+
+			res.status(200).json({
+				success: true,
+				data: file.name,
+			})
+		}
+	})
 })
 
 // @desc    Delete a bootcamp
