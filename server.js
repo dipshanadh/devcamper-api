@@ -1,8 +1,6 @@
 // importing all dependencies
 const express = require("express")
 const dotenv = require("dotenv")
-const fileupload = require("express-fileupload")
-const path = require("path")
 
 const connectDB = require("./config/db")
 
@@ -28,9 +26,6 @@ app.use(express.json())
 
 // logger middleware
 app.use(logger)
-
-// File uploading
-app.use(fileupload())
 
 // Set static folder
 app.use(express.static("public"))

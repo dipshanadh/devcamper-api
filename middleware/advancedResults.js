@@ -51,6 +51,23 @@ const advancedResults = (model, populate) => async (req, res, next) => {
 		query = query.populate(populate)
 	}
 
+	// If zipcode is given, get bootcamp by radius
+	if (req.query.zipcode) {
+		// Get lat/lng from geocoder
+		const loc = await geocoder.geocode(zipcode)
+		const lat = loc[0].latitude
+		const lng = loc[0].longitude
+
+		// Calc radius using radians
+		// Divide distance by radius of Earth
+		// Earth Radius = 3,963 mi / 6,378 km
+		const radius = distance / 3963
+
+		query = query.find({
+			location: { $geoWithin: { $centerSphere: [[lng, lat], radius] } },
+		})
+	}
+
 	// Executing query
 	const results = await query
 

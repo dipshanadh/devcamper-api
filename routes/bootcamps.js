@@ -1,4 +1,5 @@
 const express = require("express")
+const fileupload = require("express-fileupload")
 
 // controller functions
 const {
@@ -23,7 +24,16 @@ const router = express.Router()
 router.use("/:bootcampSlug/courses", courseRouter)
 
 // "Get bootcamp in radius" route
-router.route("/radius/:zipcode/:distance").get(getBootcampsInRadius)
+router.route("/radius/:zipcode/:distance").get(
+	advancedResults(Bootcamp, {
+		path: "courses",
+		select: "title slug",
+	}),
+	getBootcampsInRadius
+)
+
+// File uploading
+router.use(fileupload())
 
 // Photo upload route
 router.route("/:slug/photo").put(bootcampPhotoUpload)
