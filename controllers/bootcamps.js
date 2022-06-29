@@ -11,83 +11,7 @@ const asyncHandler = require("../middleware/asyncHandler")
 
 // using async handler to prevent repetitive code
 const getBootcamps = asyncHandler(async (req, res, next) => {
-	// copy req.query
-	const reqQuery = { ...req.query }
-
-	// Fields to exlude
-	const removeFields = ["select", "sort", "page", "limit"]
-
-	// Loop over removeFields and delete them from query
-	removeFields.forEach(param => delete reqQuery[param])
-
-	// Create query string
-	let queryStr = JSON.stringify(reqQuery)
-
-	// Create operator ($gt, $gte, etc.)
-	queryStr = queryStr.replace(/\b(gt|gte|lt|lte|in)\b/g, match => `$${match}`)
-
-	// Finding resource
-	let query = Bootcamp.find(JSON.parse(queryStr))
-
-	// Select Fields
-	if (req.query.select) {
-		// include the select values, exclude other fields
-		const fields = req.query.select.split(",").join(" ")
-		query = query.select(fields)
-	}
-
-	// Sort
-	if (req.query.sort) {
-		const sortBy = req.query.sort.split(",").join(" ")
-		query = query.sort(sortBy)
-	} else {
-		query = query.sort("-createdAt")
-	}
-
-	// Pagination
-	const page = parseInt(req.query.page, 10) || 1,
-		limit = parseInt(req.query.limit, 10) || 10,
-		// get the number of documents to skip
-		// if page is 1, it will skip 0 docs
-		// if page is 3, then it will skip 2 pages ahead, i.e. , 2x2(default) docs
-		startIndex = (page - 1) * limit,
-		// get the endIndex (total number of documents in page)
-		endIndex = page * limit,
-		total = await Bootcamp.countDocuments(),
-		totalPages = Math.ceil(total / limit)
-
-	query = query.skip(startIndex).limit(limit)
-
-	// Executing query
-	const bootcamps = await query
-
-	// Pagination result
-	const pagination = { totalPages, currentPage: page, limit }
-
-	// if its not the last page
-	if (endIndex < total) {
-		pagination.next = {
-			page: page + 1,
-		}
-	}
-
-	// if its not the first page
-	if (startIndex > 0) {
-		pagination.prev = {
-			page: page - 1,
-		}
-	}
-
-	console.log(
-		`Start index: ${startIndex}, End index: ${endIndex}, Total: ${total}, Limit: ${limit}, Total pages: ${totalPages}`
-	)
-
-	res.status(200).json({
-		success: true,
-		count: bootcamps.length,
-		pagination,
-		data: bootcamps,
-	})
+	res.status(200).json(res.advancedResults)
 })
 
 // @desc    Get a single bootcamp
@@ -243,6 +167,33 @@ const deleteBootcamp = asyncHandler(async (req, res, next) => {
 	}
 })
 
+// @desc      Get bootcamps within a radius
+// @route     GET /api/v1/bootcamps/radius/:zipcode/:distance
+// @access    Private
+const getBootcampsInRadius = asyncHandler(async (req, res, next) => {
+	const { zipcode, distance } = req.params
+
+	// Get lat/lng from geocoder
+	const loc = await geocoder.geocode(zipcode)
+	const lat = loc[0].latitude
+	const lng = loc[0].longitude
+
+	// Calc radius using radians
+	// Divide distance by radius of Earth
+	// Earth Radius = 3,963 mi / 6,378 km
+	const radius = distance / 3963
+
+	const bootcamps = await Bootcamp.find({
+		location: { $geoWithin: { $centerSphere: [[lng, lat], radius] } },
+	})
+
+	res.status(200).json({
+		success: true,
+		count: bootcamps.length,
+		data: bootcamps,
+	})
+})
+
 module.exports = {
 	getBootcamp,
 	getBootcamps,
@@ -250,4 +201,5 @@ module.exports = {
 	updateBootcamp,
 	deleteBootcamp,
 	bootcampPhotoUpload,
+	getBootcampsInRadius,
 }
