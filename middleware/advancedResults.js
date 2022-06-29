@@ -69,7 +69,7 @@ const advancedResults = (model, populate) => async (req, res, next) => {
 	}
 
 	// Executing query
-	const results = await query
+	let results = await query
 
 	// Pagination result
 	const pagination = { totalPages, currentPage: page, limit }
@@ -87,6 +87,12 @@ const advancedResults = (model, populate) => async (req, res, next) => {
 			page: page - 1,
 		}
 	}
+
+	// Search bootcamp
+	// if (req.query.search && results)
+	// 	results = results.filter(result =>
+	// 		result.title.toLowerCase().includes(req.query.search)
+	// 	)
 
 	res.advancedResults = {
 		success: true,

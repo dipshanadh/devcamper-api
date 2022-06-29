@@ -5,7 +5,7 @@ const geocoder = require("../utils/geocoder")
 
 const BootcampSchema = new mongoose.Schema(
 	{
-		name: {
+		title: {
 			type: String,
 			// for a custom message we can put an array with two values, one the boolean and the next one message
 			required: [true, "Please add a name"],
@@ -107,9 +107,9 @@ const BootcampSchema = new mongoose.Schema(
 	}
 )
 
-// Create bootcamp slug from the name
+// Create bootcamp slug from the title
 BootcampSchema.pre("save", function (next) {
-	this.slug = slugify(this.name, {
+	this.slug = slugify(this.title, {
 		lower: true,
 		strict: true,
 	})

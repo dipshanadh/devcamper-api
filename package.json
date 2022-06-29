@@ -1,5 +1,5 @@
 {
-	"name": "devcamper_api",
+	"name": "devcamper-api",
 	"version": "1.0.0",
 	"description": "Backend API made by me while learning node.js and express.js",
 	"main": "server.js",
@@ -10,9 +10,11 @@
 	"author": "Dipshan Adhikari",
 	"license": "ISC",
 	"dependencies": {
+		"bcryptjs": "^2.4.3",
 		"dotenv": "^16.0.1",
 		"express": "^4.18.1",
 		"express-fileupload": "^1.4.0",
+		"jsonwebtoken": "^8.5.1",
 		"mongoose": "^6.3.6",
 		"node-geocoder": "^4.0.0",
 		"slugify": "^1.6.5"
