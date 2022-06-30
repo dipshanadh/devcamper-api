@@ -89,10 +89,10 @@ const advancedResults = (model, populate) => async (req, res, next) => {
 	}
 
 	// Search bootcamp
-	// if (req.query.search && results)
-	// 	results = results.filter(result =>
-	// 		result.title.toLowerCase().includes(req.query.search)
-	// 	)
+	if (req.query.search && results)
+		results = results.filter(result =>
+			result.title.toLowerCase().includes(req.query.search)
+		)
 
 	res.advancedResults = {
 		success: true,
