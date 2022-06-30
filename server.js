@@ -17,6 +17,7 @@ const errorHandler = require("./middleware/errorHandler")
 // router files
 const bootcamps = require("./routes/bootcamps")
 const courses = require("./routes/courses")
+const auth = require("./routes/auth")
 
 // initializing the app
 const app = express()
@@ -33,6 +34,7 @@ app.use(express.static("public"))
 // mount routers
 app.use("/api/bootcamps", bootcamps)
 app.use("/api/courses", courses)
+app.use("/api/auth", auth)
 
 // error handler - put after the router !
 app.use(errorHandler)

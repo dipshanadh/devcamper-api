@@ -10,29 +10,31 @@ const errorHandler = (err, req, res, next) => {
 	console.log(err)
 	// console.log(err.name)
 
+	let message
+
 	// Mongoose bad OjbectID
-	if (err.name === "CastError") {
-		const message = `Resource not found with id of ${err.value}`
-		error = new ErrorResponse(message, 404)
-	}
+	if (err.name === "CastError")
+		message = `Resource not found with id of ${err.value}`
 
 	// Mongoose duplicate key
 	if (err.code === 11000) {
-		const message = `Duplicate field value entered: ${Object.values(
+		message = `Duplicate field value entered: ${Object.values(
 			err.keyValue
 		)}`
-		error = new ErrorResponse(message, 400)
+
+		if (err.keyValue.email)
+			message = `A user already exists with the email of ${err.keyValue.email}`
 	}
 
 	// Mongoose validation error
-	if (err.name === "ValidationError") {
-		const message = Object.values(err.errors).map(val => val.message)
-		error = new ErrorResponse(message, 400)
-	}
+	if (err.name === "ValidationError")
+		message = Object.values(err.errors).map(val => val.message)
+
+	error = new ErrorResponse(message, 400)
 
 	res.status(error.statusCode || 500).json({
 		success: false,
-		error: error.message || "Server error",
+		errors: error.message.split(",").join(", ") || "Server error",
 	})
 }
 
