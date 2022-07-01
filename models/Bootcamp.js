@@ -8,10 +8,10 @@ const BootcampSchema = new mongoose.Schema(
 		title: {
 			type: String,
 			// for a custom message we can put an array with two values, one the boolean and the next one message
-			required: [true, "Please add a name"],
+			required: [true, "Please add a title"],
 			unique: true,
 			trim: true,
-			maxlength: [50, "Name can not be more than 50 characters"],
+			maxlength: [50, "Title can not be more than 50 characters"],
 		},
 		slug: String,
 		description: {
