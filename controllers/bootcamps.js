@@ -34,7 +34,7 @@ const getBootcamp = asyncHandler(async (req, res, next) => {
 	} else {
 		next(
 			new ErrorResponse(
-				`Bootcamp not found with id of ${req.params.id}`,
+				`Bootcamp not found with id of ${req.params.slug}`,
 				404
 			)
 		)
@@ -75,8 +75,26 @@ const createBootcamp = asyncHandler(async (req, res, next) => {
 // @route   PUT /api/bootcamps/:slug
 // @access  Private
 const updateBootcamp = asyncHandler(async (req, res, next) => {
+	let bootcamp = await Bootcamp.findOne({ slug: req.params.slug })
+
+	if (!bootcamp)
+		return next(
+			new ErrorResponse(
+				`Bootcamp not found with id of ${req.params.id}`,
+				404
+			)
+		)
+
+	// Make sure user is bootcamp owner
+	if (bootcamp.userSlug !== req.user.slug && req.user.role !== "admin")
+		return next(
+			new ErrorResponse(
+				`User ${req.user.slug} is not authorized to update this bootcamp`
+			)
+		)
+
 	// passing three parameters to the findByIdAndUpdate function, one the id, second the updted data and third (optional) for more configuration
-	const bootcamp = await Bootcamp.findOneAndUpdate(
+	bootcamp = await Bootcamp.findOneAndUpdate(
 		{ slug: req.params.slug },
 		req.body,
 		{
@@ -86,19 +104,10 @@ const updateBootcamp = asyncHandler(async (req, res, next) => {
 		}
 	)
 
-	if (bootcamp) {
-		res.status(200).json({
-			success: true,
-			data: bootcamp,
-		})
-	} else {
-		next(
-			new ErrorResponse(
-				`Bootcamp not found with id of ${req.params.id}`,
-				404
-			)
-		)
-	}
+	res.status(200).json({
+		success: true,
+		data: bootcamp,
+	})
 })
 
 // @desc    Upload photo for a bootcamp
@@ -115,6 +124,14 @@ const bootcampPhotoUpload = asyncHandler(async (req, res, next) => {
 			)
 		)
 	}
+
+	// Make sure user is bootcamp owner
+	if (bootcamp.userSlug !== req.user.slug && req.user.role !== "admin")
+		return next(
+			new ErrorResponse(
+				`User ${req.user.slug} is not authorized to update this bootcamp`
+			)
+		)
 
 	if (!req.files) {
 		return next(new ErrorResponse("Please upload a file", 400))
@@ -170,22 +187,29 @@ const bootcampPhotoUpload = asyncHandler(async (req, res, next) => {
 const deleteBootcamp = asyncHandler(async (req, res, next) => {
 	const bootcamp = await Bootcamp.findOne({ slug: req.params.slug })
 
-	if (bootcamp) {
-		await bootcamp.remove()
-		const Bootcamps = await Bootcamp.find()
-		res.status(200).json({
-			success: true,
-			count: Bootcamps.length,
-			data: Bootcamps,
-		})
-	} else {
+	if (!bootcamp)
 		next(
 			new ErrorResponse(
 				`Bootcamp not found with id of ${req.params.slug}`,
 				404
 			)
 		)
-	}
+
+	// Make sure user is bootcamp owner
+	if (bootcamp.userSlug !== req.user.slug && req.user.role !== "admin")
+		return next(
+			new ErrorResponse(
+				`User ${req.user.slug} is not authorized to update this bootcamp`
+			)
+		)
+
+	await bootcamp.remove()
+	const Bootcamps = await Bootcamp.find()
+	res.status(200).json({
+		success: true,
+		count: Bootcamps.length,
+		data: Bootcamps,
+	})
 })
 
 // @desc      Get bootcamps within a radius
