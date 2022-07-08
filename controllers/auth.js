@@ -77,4 +77,28 @@ const getCurrentUser = asyncHandler(async (req, res, next) => {
 	})
 })
 
-module.exports = { register, login, getCurrentUser }
+// @desc    Forgot password
+// @route   POST /api/auth/forgot-password
+// @access  Private
+const forgotPassword = asyncHandler(async (req, res, next) => {
+	const user = await User.findOne({ email: req.body.email })
+
+	if (!user)
+		return next(
+			new ErrorResponse(
+				`There is no user with the email ${req.body.email}`
+			)
+		)
+
+	// Get reset token
+	const resetToken = user.getResetPasswordToken()
+
+	await user.save({ validateBeforeSave: false })
+
+	res.status(200).json({
+		success: true,
+		data: user,
+	})
+})
+
+module.exports = { register, login, getCurrentUser, forgotPassword }

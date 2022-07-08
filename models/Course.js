@@ -45,6 +45,16 @@ const CourseSchema = new mongoose.Schema({
 		type: String,
 		required: true,
 	},
+	user: {
+		type: mongoose.Schema.ObjectId,
+		// reference for User model
+		ref: "User",
+		required: true,
+	},
+	userSlug: {
+		type: String,
+		required: true,
+	},
 	slug: String,
 })
 
