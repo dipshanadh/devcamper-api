@@ -1,6 +1,7 @@
 // import the schema
 const User = require("../models/User")
 const ErrorResponse = require("../utils/errorResponse")
+const sendEmail = require("../utils/sendEmail")
 const asyncHandler = require("../middleware/asyncHandler")
 
 // @desc    Register a user
@@ -95,10 +96,30 @@ const forgotPassword = asyncHandler(async (req, res, next) => {
 
 	await user.save({ validateBeforeSave: false })
 
-	res.status(200).json({
-		success: true,
-		data: user,
-	})
+	// Create rest URL
+	const resetURL = `${req.protocol}://${req.get(
+		"host"
+	)}/api/resetPassword/${resetToken}`
+
+	const message = `Your are receiving this email because a password reset request was done for your account. Please make a PUT request to \n\n ${resetURL}`
+
+	try {
+		await sendEmail({
+			email: user.email,
+			subject: "Password rest token",
+			message,
+		})
+
+		res.status(200).json({ success: true, data: "E-mail sent !" })
+	} catch (err) {
+		console.log(err)
+		user.resetPasswordToken = undefined
+		user.resetPasswordExpire = undefined
+
+		await user.save({ validateBeforeSave: false })
+
+		return next(new ErrorResponse(`Email couldn't be sent`, 500))
+	}
 })
 
 module.exports = { register, login, getCurrentUser, forgotPassword }
