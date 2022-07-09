@@ -1,5 +1,9 @@
+const crypto = require("crypto")
+
 // import the schema
 const User = require("../models/User")
+
+// utils
 const ErrorResponse = require("../utils/errorResponse")
 const sendEmail = require("../utils/sendEmail")
 const asyncHandler = require("../middleware/asyncHandler")
@@ -18,13 +22,7 @@ const register = asyncHandler(async (req, res, next) => {
 		role,
 	})
 
-	// Create token
-	const token = user.getSignedJwtToken()
-
-	res.status(200).json({
-		success: true,
-		token,
-	})
+	sendTokenResponse(user, 200, res)
 })
 
 // @desc    Login user
@@ -52,18 +50,9 @@ const login = asyncHandler(async (req, res, next) => {
 	// Check is password matches
 	const isMatch = await user.matchPassword(password)
 
-	if (!isMatch)
-		return next(
-			new ErrorResponse("No user found with the entered password", 401)
-		)
+	if (!isMatch) return next(new ErrorResponse("Incorrect password", 401))
 
-	// Create token
-	const token = user.getSignedJwtToken()
-
-	res.status(200).json({
-		success: true,
-		token,
-	})
+	sendTokenResponse(user, 200, res)
 })
 
 // @desc    Get current logged in user
@@ -99,7 +88,7 @@ const forgotPassword = asyncHandler(async (req, res, next) => {
 	// Create rest URL
 	const resetURL = `${req.protocol}://${req.get(
 		"host"
-	)}/api/resetPassword/${resetToken}`
+	)}/api/auth/resetPassword/${resetToken}`
 
 	const message = `Your are receiving this email because a password reset request was done for your account. Please make a PUT request to \n\n ${resetURL}`
 
@@ -122,4 +111,46 @@ const forgotPassword = asyncHandler(async (req, res, next) => {
 	}
 })
 
-module.exports = { register, login, getCurrentUser, forgotPassword }
+// @desc    Reset password
+// @route   PUT /api/auth/resetPassword
+// @access  Public
+const resetPassword = asyncHandler(async (req, res, next) => {
+	// Get hashed token
+	const resetPasswordToken = crypto
+		.createHash("sha256")
+		.update(req.params.resetToken)
+		.digest("hex")
+
+	const user = await User.findOne({
+		resetPasswordToken,
+		resetPasswordExpire: { $gt: Date.now() },
+	})
+
+	if (!user) return next(new ErrorResponse("Invalid token", 400))
+
+	// Set new password
+	user.password = req.body.password
+	user.resetPasswordToken = undefined
+	user.resetPasswordExpire = undefined
+
+	await user.save()
+
+	sendTokenResponse(user, 200, res)
+})
+
+// Get token from model and send response
+const sendTokenResponse = (user, statusCode, res) => {
+	// Create token
+
+	const token = user.getSignedJwtToken()
+
+	res.status(statusCode).json({ success: true, token })
+}
+
+module.exports = {
+	register,
+	login,
+	getCurrentUser,
+	forgotPassword,
+	resetPassword,
+}
