@@ -147,10 +147,53 @@ const sendTokenResponse = (user, statusCode, res) => {
 	res.status(statusCode).json({ success: true, token })
 }
 
+// @desc    Update user details
+// @route   PUT /api/auth/update-details
+// @access  Private
+const updateUserDetails = asyncHandler(async (req, res, next) => {
+	const { name, email } = req.body
+
+	const fieldsToUpdate = {
+		name,
+		email,
+	}
+
+	const user = await User.findOneAndUpdate(
+		{ slug: req.user.slug },
+		fieldsToUpdate,
+		{ new: true, runValidators: true }
+	)
+
+	res.status(200).json({
+		success: true,
+		data: user,
+	})
+})
+
+// @desc    Update password
+// @route   POST /api/auth/update-password
+// @access  Private
+const updatePassword = asyncHandler(async (req, res, next) => {
+	const { currentPassword, newPassword } = req.body
+
+	const user = await User.findOne({ slug: req.user.slug }).select("+password")
+
+	// Check current password
+	if (!(await user.matchPassword(currentPassword)))
+		return next(new ErrorResponse("Password is incorrect", 401))
+
+	user.password = newPassword
+	await user.save()
+
+	sendTokenResponse(user, 200, res)
+})
+
 module.exports = {
 	register,
 	login,
 	getCurrentUser,
 	forgotPassword,
+	updatePassword,
 	resetPassword,
+	updateUserDetails,
 }

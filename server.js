@@ -18,6 +18,7 @@ const errorHandler = require("./middleware/errorHandler")
 const bootcamps = require("./routes/bootcamps")
 const courses = require("./routes/courses")
 const auth = require("./routes/auth")
+const users = require("./routes/users")
 
 // initializing the app
 const app = express()
@@ -35,6 +36,7 @@ app.use(express.static("public"))
 app.use("/api/bootcamps", bootcamps)
 app.use("/api/courses", courses)
 app.use("/api/auth", auth)
+app.use("/api/users", users)
 
 // error handler - put after the router !
 app.use(errorHandler)
