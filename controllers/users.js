@@ -7,7 +7,7 @@ const asyncHandler = require("../middleware/asyncHandler")
 // @route   GET /api/users
 // @access  Public
 const getUsers = asyncHandler(async (req, res, next) => {
-	res.status(200).json(req.advancedResults)
+	res.status(200).json(res.advancedResults)
 })
 
 // @desc    Get a user
@@ -65,7 +65,7 @@ const deleteUser = asyncHandler(async (req, res, next) => {
 	})
 })
 
-module.exporsts = {
+module.exports = {
 	getUsers,
 	getUser,
 	createUser,
