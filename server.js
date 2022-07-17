@@ -19,6 +19,7 @@ const bootcamps = require("./routes/bootcamps")
 const courses = require("./routes/courses")
 const auth = require("./routes/auth")
 const users = require("./routes/users")
+const reviews = require("./routes/reviews")
 
 // initializing the app
 const app = express()
@@ -37,6 +38,7 @@ app.use("/api/bootcamps", bootcamps)
 app.use("/api/courses", courses)
 app.use("/api/auth", auth)
 app.use("/api/users", users)
+app.use("/api/reviews", reviews)
 
 // error handler - put after the router !
 app.use(errorHandler)
