@@ -1,8 +1,4 @@
 const mongoose = require("mongoose")
-const slugify = require("slugify")
-
-const Bootcamp = require("./Bootcamp")
-const User = require("./User")
 
 const ReviewSchema = new mongoose.Schema({
 	title: {
@@ -10,16 +6,15 @@ const ReviewSchema = new mongoose.Schema({
 		trim: true,
 		maxlength: [50, "Title can not be more than 50 characters"],
 		required: [true, "Please add a review title"],
-		unique: true,
 	},
 	text: {
 		type: String,
-		maxlength: [500, "Description can not be more than 500 characters"],
-		required: [true, "Please add a description"],
+		maxlength: [500, "Review text can not be more than 500 characters"],
+		required: [true, "Please add a review text"],
 	},
 	rating: {
 		type: Number,
-		required: [true, "Please add the rating between 1 to 5"],
+		required: [true, "Please add the rating between 1 to 10"],
 		min: 1,
 		max: 10,
 	},
