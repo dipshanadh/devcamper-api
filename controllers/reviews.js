@@ -78,7 +78,10 @@ const addReview = asyncHandler(async (req, res, next) => {
 	req.body.bootcamp = bootcamp.id
 
 	// Prevent user from submitting more than one review for a bootcamp
-	let review = await Review.find({ user: req.user.id })
+	let review = await Review.findOne({
+		bootcampSlug: req.params.bootcampSlug,
+		user: req.user.id,
+	})
 
 	if (review)
 		return next(
@@ -96,4 +99,69 @@ const addReview = asyncHandler(async (req, res, next) => {
 	})
 })
 
-module.exports = { getReviews, getReview, addReview }
+// @desc    Update a review
+// @route   PUT /api/reviews/:id
+// @access  Private
+const updateReview = asyncHandler(async (req, res, next) => {
+	let review = await Review.findById(req.params.id)
+
+	if (!review)
+		return next(
+			new ErrorResponse(
+				`No review found with the id of ${req.params.id}`,
+				404
+			)
+		)
+
+	// Make sure review belongs to review or user is an admin
+	if (review.user != req.user.id && req.user.role != "admin")
+		return next(
+			new ErrorResponse("User not authorized to update the review", 401)
+		)
+
+	review = await Review.findOneAndUpdate(req.params.id, req.body, {
+		new: true,
+		runValidators: true,
+	})
+
+	res.status(200).json({
+		success: true,
+		data: review,
+	})
+})
+
+// @desc    DELETE a review
+// @route   DELETE /api/reviews/:id
+// @access  Private
+const deleteReview = asyncHandler(async (req, res, next) => {
+	const review = await Review.findById(req.params.id)
+
+	if (!review)
+		return next(
+			new ErrorResponse(
+				`No review found with the id of ${req.params.id}`,
+				404
+			)
+		)
+
+	// Make sure review belongs to review or user is an admin
+	if (review.user != req.user.id && req.user.role != "admin")
+		return next(
+			new ErrorResponse("User not authorized to delete the review", 401)
+		)
+
+	await review.remove()
+
+	res.status(200).json({
+		success: true,
+		data: {},
+	})
+})
+
+module.exports = {
+	getReviews,
+	getReview,
+	addReview,
+	updateReview,
+	deleteReview,
+}
