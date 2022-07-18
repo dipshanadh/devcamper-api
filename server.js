@@ -1,6 +1,9 @@
 // importing all dependencies
 const express = require("express")
 const dotenv = require("dotenv")
+const mongoSanitize = require("express-mongo-sanitize")
+const helmet = require("helmet")
+const xss = require("xss-clean")
 
 const connectDB = require("./config/db")
 
@@ -30,8 +33,17 @@ app.use(express.json())
 // logger middleware
 app.use(logger)
 
+// set security headers
+app.use(helmet())
+
 // Set static folder
 app.use(express.static("public"))
+
+// Sanitize data
+app.use(mongoSanitize())
+
+// Prevent cross site scripting (XSS)
+app.use(xss())
 
 // mount routers
 app.use("/api/bootcamps", bootcamps)
