@@ -44,4 +44,34 @@ const ReviewSchema = new mongoose.Schema({
 	slug: String,
 })
 
+// Static method to get avg rating of bootcamps and save
+ReviewSchema.statics.getAverageRating = async function (id) {
+	const obj = await this.aggregate([
+		{
+			$match: { bootcamp: id },
+		},
+		{
+			// the id must be specified
+			$group: {
+				_id: "$bootcamp",
+				averageRating: { $avg: "$rating" },
+			},
+		},
+	])
+
+	await this.model("Bootcamp").findByIdAndUpdate(id, {
+		averageRating: Math.ceil(obj[0].averageRating),
+	})
+}
+
+// Call getAverageCost after save
+ReviewSchema.post("save", function () {
+	this.constructor.getAverageRating(this.bootcamp)
+})
+
+// Call getAverageRating after remove
+ReviewSchema.post("remove", function () {
+	this.constructor.getAverageRating(this.bootcamp)
+})
+
 module.exports = mongoose.model("Review", ReviewSchema)
