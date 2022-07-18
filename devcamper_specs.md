@@ -1,7 +1,5 @@
 # DevCamper Backend API Specifications
 
-Create the backend for a bootcamp directory website. The frontend/UI will be created by another team (future course). The html/css template has been created and can be used as a reference for functionality. All of the functionality below needs to be fully implmented in this project.
-
 ### Bootcamps
 - List all bootcamps in the database
    * Pagination
@@ -65,9 +63,7 @@ Create the backend for a bootcamp directory website. The frontend/UI will be cre
 - User login
   * User can login with email and password
   * Plain text password will compare with stored hashed password
-  * Once logged in, a token will be sent along with a cookie (token = xxx)
-- User logout
-  * Cookie will be sent to set token = none
+  * Once logged in, a token will be sent a token
 - Get user
   * Route to get the currently logged in user (via token)
 - Password reset (lost password)
@@ -89,22 +85,7 @@ Create the backend for a bootcamp directory website. The frontend/UI will be cre
 - Add a rate limit for requests of 100 requests per 10 minutes
 - Protect against http param polution
 - Add headers for security (helmet)
-- Use cors to make API public (for now)
-
-## Documentation
-- Use Postman to create documentation
-- Use docgen to create HTML files from Postman
-- Add html files as the / route for the api
-
-## Deployment (Digital Ocean)
-- Push to Github
-- Create a droplet - https://m.do.co/c/5424d440c63a
-- Clone repo on to server
-- Use PM2 process manager
-- Enable firewall (ufw) and open needed ports
-- Create an NGINX reverse proxy for port 80
-- Connect a domain name
-- Install an SSL using Let's Encrypt
+- Use cors to make API public
 
 ## Code Related Suggestions
 - NPM scripts for dev and production env
