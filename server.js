@@ -6,6 +6,7 @@ const helmet = require("helmet")
 const xss = require("xss-clean")
 const rateLimit = require("express-rate-limit")
 const hpp = require("hpp")
+const cors = require("cors")
 
 const connectDB = require("./config/db")
 
@@ -34,6 +35,9 @@ app.use(express.json())
 
 // logger middleware
 app.use(logger)
+
+// Enable cors
+app.use(cors())
 
 // set security headers
 app.use(helmet())
