@@ -4,7 +4,7 @@
 	"description": "Backend API made by me while learning node.js and express.js",
 	"main": "server.js",
 	"scripts": {
-		"start": "SET NODE_ENV=production && node server",
+		"start": "node server",
 		"dev": "nodemon server"
 	},
 	"author": "Dipshan Adhikari",
