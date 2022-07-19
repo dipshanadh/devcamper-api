@@ -36,8 +36,6 @@ node seeder -i
 
 ## Demo
 
-The API will soon be live !
-
-Extensive documentation with examples [here](https://documenter.getpostman.com/view/8923145/SVtVVTzd?version=latest)
+The API is live at [https://devcamper-api-dipshan.herokuapp.com/](https://devcamper-api-dipshan.herokuapp.com/)
 
 - Author: Dipshan Adhikari
