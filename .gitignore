@@ -1,4 +1,4 @@
 node_modules
 config/config.env
-public/uploads
+public/uploads/*
 Procfile
