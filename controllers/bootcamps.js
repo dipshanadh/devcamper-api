@@ -144,8 +144,8 @@ const bootcampPhotoUpload = asyncHandler(async (req, res, next) => {
 		return next(new ErrorResponse("Please upload an image file", 400))
 	}
 
-	// 1 kb = 1024b and 1mb = 1024kb so the max file size is 1mb
-	const maxFileSize = 2 * 1024 * 1024
+	// 1 kb = 1024b and 1mb = 1024kb so the max file size is 5mb
+	const maxFileSize = process.env.MAX_FILE_UPLOAD * 1024 * 1024
 
 	// Check file size
 	if (file.size > maxFileSize) {
