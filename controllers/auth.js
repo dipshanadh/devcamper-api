@@ -56,7 +56,7 @@ const login = asyncHandler(async (req, res, next) => {
 })
 
 // @desc    Get current logged in user
-// @route   POST /api/auth/user
+// @route   POST /api/auth/profile
 // @access  Private
 const getCurrentUser = asyncHandler(async (req, res, next) => {
 	const user = await User.findOne({ slug: req.user.slug })
@@ -91,6 +91,8 @@ const forgotPassword = asyncHandler(async (req, res, next) => {
 	)}/api/auth/resetPassword/${resetToken}`
 
 	const message = `Your are receiving this email because a password reset request was done for your account. Please make a PUT request to \n\n ${resetURL}`
+
+	console.log(message)
 
 	try {
 		await sendEmail({
